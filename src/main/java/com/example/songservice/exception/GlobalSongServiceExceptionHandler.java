@@ -20,4 +20,14 @@ public class GlobalSongServiceExceptionHandler {
         return ResponseEntity.badRequest().body("Song metadata missing validation error");
     }
 
+    @ExceptionHandler(SongRecordMetadataNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleSongRecordMetadataNotFoundException(SongRecordMetadataNotFoundException e) {
+        log.error("SongRecordMetadata not found by id '{}'", e.getMessage());
+
+        return new ResponseEntity<>(
+                String.format("The song metadata with the specified id '%s' does not exist", e.getMessage()),
+                HttpStatus.NOT_FOUND);
+    }
+
 }

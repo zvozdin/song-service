@@ -5,7 +5,7 @@ import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import java.time.Year;
 
-public record SongRecordMetadataRequestEntity(
+public record SongRecordMetadataRequestResponseEntity(
 
         @NotEmpty
         String name,

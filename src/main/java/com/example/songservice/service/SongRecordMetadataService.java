@@ -1,5 +1,6 @@
 package com.example.songservice.service;
 
+import com.example.songservice.exception.SongRecordMetadataNotFoundException;
 import com.example.songservice.repository.SongRecordMetadataRepository;
 import com.example.songservice.repository.entity.SongRecordMetadataEntity;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,11 @@ public class SongRecordMetadataService {
 
     public int save(SongRecordMetadataEntity songRecordMetadata) {
         return repository.save(songRecordMetadata).getId().intValue();
+    }
+
+    public SongRecordMetadataEntity find(String id) {
+        return repository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new SongRecordMetadataNotFoundException(id));
     }
 
 }
