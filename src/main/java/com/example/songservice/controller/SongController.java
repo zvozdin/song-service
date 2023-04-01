@@ -43,6 +43,7 @@ public class SongController {
     @ResponseStatus(HttpStatus.OK)
     public HttpEntity<SavedSongRecordMetadataEntityResponse> saveSongRecordMetadata(
             @Valid @RequestBody SongRecordMetadataRequestResponseEntity request) {
+
         return new HttpEntity<>(
                 new SavedSongRecordMetadataEntityResponse(
                         songRecordMetadataService.save(mapper.toSongRecordMetadataEntity(request))));
@@ -50,7 +51,9 @@ public class SongController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public HttpEntity<DeletedSongRecordMetadataIdsResponse> deleteResource(@ValidList @RequestParam("id") List<String> ids) {
+    public HttpEntity<DeletedSongRecordMetadataIdsResponse> deleteResource(
+            @ValidList @RequestParam("id") List<String> ids) {
+
         songRecordMetadataService.delete(ids);
         return new HttpEntity<>(new DeletedSongRecordMetadataIdsResponse(ids));
     }
