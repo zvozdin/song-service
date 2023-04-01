@@ -1,22 +1,27 @@
 package com.example.songservice.controller;
 
+import com.example.songservice.controller.entity.DeletedSongRecordMetadataIdsResponse;
 import com.example.songservice.controller.entity.SavedSongRecordMetadataEntityResponse;
 import com.example.songservice.controller.entity.SongRecordMetadataRequestResponseEntity;
+import com.example.songservice.util.ValidList;
 import com.example.songservice.mapper.SongRecordMetadataMapper;
 import com.example.songservice.service.SongRecordMetadataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/songs")
@@ -41,6 +46,13 @@ public class SongController {
         return new HttpEntity<>(
                 new SavedSongRecordMetadataEntityResponse(
                         songRecordMetadataService.save(mapper.toSongRecordMetadataEntity(request))));
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public HttpEntity<DeletedSongRecordMetadataIdsResponse> deleteResource(@ValidList @RequestParam("id") List<String> ids) {
+        songRecordMetadataService.delete(ids);
+        return new HttpEntity<>(new DeletedSongRecordMetadataIdsResponse(ids));
     }
 
 }

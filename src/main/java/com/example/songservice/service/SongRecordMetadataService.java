@@ -6,6 +6,8 @@ import com.example.songservice.repository.entity.SongRecordMetadataEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class SongRecordMetadataService {
@@ -19,6 +21,11 @@ public class SongRecordMetadataService {
     public SongRecordMetadataEntity find(String id) {
         return repository.findById(Long.parseLong(id))
                 .orElseThrow(() -> new SongRecordMetadataNotFoundException(id));
+    }
+
+    public void delete(List<String> ids) {
+        repository.deleteAllById(
+                ids.stream().map(Long::parseLong).toList());
     }
 
 }
