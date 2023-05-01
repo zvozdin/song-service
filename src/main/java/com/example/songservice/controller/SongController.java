@@ -7,6 +7,7 @@ import com.example.songservice.util.ValidList;
 import com.example.songservice.mapper.SongRecordMetadataMapper;
 import com.example.songservice.service.SongRecordMetadataService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/songs")
 @RestController
@@ -34,6 +36,9 @@ public class SongController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public HttpEntity<SongRecordMetadataRequestResponseEntity> getSongRecordMetadata(@PathVariable String id) {
+
+        log.info("Incoming request to get song metadata by id {}", id);
+
         return new HttpEntity<>(
                 mapper.toSongRecordMetadataRequestResponseEntity(
                         songRecordMetadataService.find(id)));
@@ -43,6 +48,8 @@ public class SongController {
     @ResponseStatus(HttpStatus.OK)
     public HttpEntity<SavedSongRecordMetadataEntityResponse> saveSongRecordMetadata(
             @Valid @RequestBody SongRecordMetadataRequestResponseEntity request) {
+
+        log.info("Incoming request to save song metadata for resourceId {}", request.resourceId());
 
         return new HttpEntity<>(
                 new SavedSongRecordMetadataEntityResponse(
