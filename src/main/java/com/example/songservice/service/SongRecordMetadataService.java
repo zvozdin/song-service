@@ -19,7 +19,7 @@ public class SongRecordMetadataService {
     }
 
     public SongRecordMetadataEntity find(String id) {
-        return repository.findById(Long.parseLong(id))
+        return repository.findByResourceId(id)
                 .orElseThrow(() -> new SongRecordMetadataNotFoundException(id));
     }
 
