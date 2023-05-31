@@ -11,9 +11,13 @@ services:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+    expose:
       - "8081:8081"
     depends_on:
+      - postgres
+    networks:
+      - service-registry_default
       - postgres
 
   postgres:
@@ -25,3 +29,10 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - '5433:5432'
+    networks:
+      - postgres
+
+networks:
+  postgres:
+  service-registry_default:
+    external: true
