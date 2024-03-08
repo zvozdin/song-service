@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: song-postgres
+  namespace: k8s-program
+  labels:
+    app: song-postgres
+spec:
+  serviceName: song-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: song-postgres
+  template:
+    metadata:
+      name: song-postgres
+      labels:
+        app: song-postgres
+    spec:
+      containers:
+        - name: song-postgres
+          image: postgres
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: song-postgres
+          envFrom:
+            - configMapRef:
+                name: song-postgres-config
+      volumes:
+        - name: song-postgres
+          persistentVolumeClaim:
+            claimName: postgres-song-volume-claim
+      restartPolicy: Always
