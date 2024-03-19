@@ -13,6 +13,8 @@ public record SongRecordMetadataRequestResponseEntity(
         String artist,
         @NotEmpty
         String album,
+        @NotEmpty
+        String genre,
         @Pattern(regexp = "^(|[0-5])([0-9]):([0-5][0-9])$")
         @NotEmpty
         String length,

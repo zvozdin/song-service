@@ -25,6 +25,7 @@ public class SongRecordMetadataEntity {
     private String length;
     private String resourceId;
     private String year;
+    private String genre;
 
     public SongRecordMetadataEntity() {
 

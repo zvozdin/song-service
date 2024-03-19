@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: song-postgres-service
+  namespace: k8s-program
+spec:
+  selector:
+    app: song-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: song-postgres-statefulset
+  namespace: k8s-program
+  labels:
+    app: song-postgres
+spec:
+  serviceName: song-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: song-postgres
+  template:
+    metadata:
+      name: song-postgres-pod
+      labels:
+        app: song-postgres
+    spec:
+      containers:
+        - name: song-postgres
+          image: postgres
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: song-postgres
+#            - mountPath: /docker-entrypoint-initdb.d
+#              name: init-script
+          envFrom:
+            - secretRef:
+                name: song-postgres-secret
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - exec pg_isready -U "admin" -d "song" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - exec pg_isready -U "admin" -d "song" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "admin" -d "song" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: song-postgres
+          persistentVolumeClaim:
+            claimName: postgres-song-volume-claim
+#        - name: init-script
+#          configMap:
+#            name: song-postgres-config
+      restartPolicy: Always
