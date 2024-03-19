@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: song-service
+  namespace: k8s-program
+spec:
+  selector:
+    app: song
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30001
+  type: NodePort
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: song-deployment
+  namespace: k8s-program
+  labels:
+    app: song
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: song
+  template:
+    metadata:
+      name: song-pod
+      labels:
+        app: song
+    spec:
+      containers:
+        - name: song
+          image: song:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: song-postgres-config
+                  key: DB_URL
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: song-postgres-secret
+                  key: POSTGRES_DB
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: song-postgres-secret
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: song-postgres-secret
+                  key: POSTGRES_PASSWORD
+          startupProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 10
+            periodSeconds: 5
+      restartPolicy: Always
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
