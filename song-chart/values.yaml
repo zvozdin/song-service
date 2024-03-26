@@ -1,0 +1,10 @@
+namespace: k8s-program
+
+deployment:
+  pullPolicy: IfNotPresent
+  app:
+    replica: 2
+    image: song:v1
+  db:
+    replica: 1
+    image: postgres
