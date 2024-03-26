@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: song-postgres-service
-  namespace: k8s-program
+  namespace: {{ .Values.namespace }}
 spec:
   selector:
     app: song-postgres
@@ -17,12 +17,12 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: song-postgres-statefulset
-  namespace: k8s-program
+  namespace: {{ .Values.namespace }}
   labels:
     app: song-postgres
 spec:
   serviceName: song-postgres
-  replicas: 1
+  replicas: {{ .Values.deployment.db.replica }}
   selector:
     matchLabels:
       app: song-postgres
@@ -34,8 +34,8 @@ spec:
     spec:
       containers:
         - name: song-postgres
-          image: postgres
-          imagePullPolicy: IfNotPresent
+          image: {{ .Values.deployment.db.image }}
+          imagePullPolicy: {{ .Values.deployment.pullPolicy }}
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: song-postgres

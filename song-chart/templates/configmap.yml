@@ -2,7 +2,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: song-postgres-config
-  namespace: k8s-program
+  namespace: {{ .Values.namespace }}
+  labels:
+    date: {{ include "songchart.currentDate" . }}
+    version: {{ include "songchart.version" . }}
 data:
   DB_URL: song-postgres-service
   01_init_db.sql: |
